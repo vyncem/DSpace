@@ -24,7 +24,7 @@ jobs:
   ####################################################
   dspace-dependencies:
     # Ensure this job never runs on forked repos. It's only executed for 'dspace/dspace'
-    if: github.repository == 'dspace/dspace'
+    if: github.repository == 'vyncem/dspace'
     uses: ./.github/workflows/reusable-docker-build.yml
     with:
       build_id: dspace-dependencies
