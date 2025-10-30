@@ -102,9 +102,9 @@ jobs:
     with:
       build_id: dspace-solr
       image_name: vyncem/dspace-solr
-      dockerfile_path: ./vyncem/src/main/docker/dspace-solr/Dockerfile
+      dockerfile_path: ./dspace/src/main/docker/dspace-solr/Dockerfile
       # Must pass solrconfigs to the Dockerfile so that it can find the required Solr config files
-      dockerfile_additional_contexts: 'solrconfigs=./vyncem/solr/'
+      dockerfile_additional_contexts: 'solrconfigs=./dspace/solr/'
     secrets:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
@@ -188,7 +188,7 @@ jobs:
       - name: Load test data into Backend
         run: |
           docker compose -f docker-compose-cli.yml run --rm dspace-cli create-administrator -e test@test.edu -f admin -l user -p admin -c en
-          docker compose -f docker-compose-cli.yml -f vyncem/src/main/docker-compose/cli.ingest.yml run --rm dspace-cli
+          docker compose -f docker-compose-cli.yml -f dspace/src/main/docker-compose/cli.ingest.yml run --rm dspace-cli
       # Verify backend started successfully.
       # 1. Make sure root endpoint is responding (check for dspace.name defined in docker-compose.yml)
       # 2. Also check /collections endpoint to ensure the test data loaded properly (check for a collection name in AIPs)
@@ -220,16 +220,16 @@ jobs:
       # 4. Check that Handle Proxy HTML page is responding on default port (8000)
       - name: Verify Handle Server is working properly
         run: |
-          docker exec -i dspace /vyncem/bin/make-handle-config
+          docker exec -i dspace /dspace/bin/make-handle-config
           echo "Starting Handle Server..."
-          docker exec -i dspace /vyncem/bin/start-handle-server
+          docker exec -i dspace /dspace/bin/start-handle-server
           sleep 20
           echo "Checking for errors in error.log"
-          result=$(docker exec -i dspace sh -c "cat /vyncem/handle-server/logs/error.log* || echo ''")
+          result=$(docker exec -i dspace sh -c "cat /dspace/handle-server/logs/error.log* || echo ''")
           echo "$result"
           echo "$result" | grep -vqz "Exception"
           echo "Checking for errors in handle-server.log..."
-          result=$(docker exec -i dspace cat /vyncem/log/handle-server.log)
+          result=$(docker exec -i dspace cat /dspace/log/handle-server.log)
           echo "$result"
           echo "$result" | grep -vqz "Exception"
           echo "Checking to see if Handle Proxy webpage is available..."
